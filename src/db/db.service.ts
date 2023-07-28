@@ -1,8 +1,9 @@
-import { Album, User } from 'src/interfaces';
+import { Album, Track, User } from 'src/interfaces';
 
 export class DBService {
   private users: User[] = [];
   private albums: Album[] = [];
+  private tracks: Track[] = [];
 
   getAllUsers() {
     return this.users;
@@ -34,5 +35,21 @@ export class DBService {
 
   deleteAlbumById(id: string) {
     this.albums = this.albums.filter(({ id: artistId }) => id !== artistId);
+  }
+
+  getAllTracks() {
+    return this.tracks;
+  }
+
+  getTrackById(id: string) {
+    return this.tracks.find(({ id: trackId }) => id === trackId);
+  }
+
+  createTrack(track: Track) {
+    this.tracks.push(track);
+  }
+
+  deleteTrackById(id: string) {
+    this.tracks = this.tracks.filter(({ id: trackId }) => id !== trackId);
   }
 }

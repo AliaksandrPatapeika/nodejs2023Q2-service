@@ -7,6 +7,14 @@ export interface User {
   updatedAt: number;
 }
 
+export interface Track {
+  id: string;
+  name: string;
+  artistId: string | null;
+  albumId: string | null;
+  duration: number;
+}
+
 export interface Album {
   id: string;
   name: string;
