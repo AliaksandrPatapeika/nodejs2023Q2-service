@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DBModule } from './db/db.module';
 import { UsersModule } from './users/users.module';
+import { ArtistsModule } from './artists/artists.module';
 import { TracksModule } from './tracks/tracks.module';
 import { AlbumsModule } from './albums/albums.module';
 import { ConfigModule } from '@nestjs/config';
@@ -11,6 +12,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     DBModule,
     UsersModule,
+    ArtistsModule,
     AlbumsModule,
     TracksModule,
     ConfigModule.forRoot(),

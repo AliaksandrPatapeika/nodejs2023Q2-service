@@ -7,6 +7,12 @@ export interface User {
   updatedAt: number;
 }
 
+export interface Artist {
+  id: string;
+  name: string;
+  grammy: boolean;
+}
+
 export interface Track {
   id: string;
   name: string;
