@@ -1,10 +1,15 @@
-import { Album, Artist, Track, User } from 'src/interfaces';
+import { Album, Artist, Favorites, Track, User } from 'src/interfaces';
 
 export class DBService {
   private users: User[] = [];
   private artists: Artist[] = [];
   private albums: Album[] = [];
   private tracks: Track[] = [];
+  private favorites: Favorites = {
+    tracks: [],
+    albums: [],
+    artists: [],
+  };
 
   getAllUsers() {
     return this.users;
@@ -68,5 +73,64 @@ export class DBService {
 
   deleteTrackById(id: string) {
     this.tracks = this.tracks.filter(({ id: trackId }) => id !== trackId);
+  }
+
+  private getFavoriteItemById<T extends keyof Favorites>(
+    type: T,
+    itemId: string,
+  ) {
+    return this.favorites[type].find((id) => id === itemId);
+  }
+
+  private createFavoriteItem<T extends keyof Favorites>(type: T, item: string) {
+    this.favorites[type].push(item);
+  }
+
+  private deleteFavoriteItemById<T extends keyof Favorites>(
+    type: T,
+    itemId: string,
+  ) {
+    const items = this.favorites[type];
+    this.favorites[type] = items.filter((id) => id !== itemId);
+  }
+
+  getAllFavorites() {
+    return this.favorites;
+  }
+
+  getFavoriteTrackById(trackId: string) {
+    return this.getFavoriteItemById('tracks', trackId);
+  }
+
+  getFavoriteArtistById(artistId: string) {
+    return this.getFavoriteItemById('artists', artistId);
+  }
+
+  getFavoriteAlbumById(albumId: string) {
+    return this.getFavoriteItemById('albums', albumId);
+  }
+
+  createFavoriteTrack(trackId: string) {
+    this.createFavoriteItem('tracks', trackId);
+  }
+
+  createFavoriteArtist(artistId: string) {
+    this.createFavoriteItem('artists', artistId);
+  }
+
+  createFavoriteAlbum(albumId: string) {
+    this.createFavoriteItem('albums', albumId);
+  }
+
+  deleteFavoriteTrackById(trackId: string) {
+    this.deleteFavoriteItemById('tracks', trackId);
+  }
+
+  deleteFavoriteArtistById(artistId: string) {
+    this.deleteFavoriteItemById('artists', artistId);
+  }
+
+  deleteFavoriteAlbumById(albumId: string) {
+    this.deleteFavoriteItemById('albums', albumId);
   }
 }
