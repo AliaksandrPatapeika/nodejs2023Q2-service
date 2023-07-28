@@ -47,6 +47,10 @@ export class DBService {
     return this.albums;
   }
 
+  getAllAlbumsByArtistId(id: string) {
+    return this.albums.filter(({ artistId }) => artistId === id);
+  }
+
   getAlbumById(id: string) {
     return this.albums.find(({ id: artistId }) => id === artistId);
   }
@@ -61,6 +65,14 @@ export class DBService {
 
   getAllTracks() {
     return this.tracks;
+  }
+
+  getAllTracksByAlbumId(id: string) {
+    return this.tracks.filter(({ albumId }) => albumId === id);
+  }
+
+  getAllTracksByArtistId(id: string) {
+    return this.tracks.filter(({ artistId }) => artistId === id);
   }
 
   getTrackById(id: string) {

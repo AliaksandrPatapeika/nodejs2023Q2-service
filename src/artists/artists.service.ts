@@ -52,5 +52,23 @@ export class ArtistsService {
   deleteArtistById(id: string) {
     this.getArtistById(id);
     this.dbService.deleteArtistById(id);
+    const tracks = this.dbService.getAllTracksByArtistId(id);
+    const albums = this.dbService.getAllAlbumsByArtistId(id);
+
+    if (tracks) {
+      tracks.map((track) => {
+        track.artistId = null;
+        return track;
+      });
+    }
+
+    if (albums) {
+      albums.map((album) => {
+        album.artistId = null;
+        return album;
+      });
+    }
+
+    this.dbService.deleteFavoriteArtistById(id);
   }
 }

@@ -61,5 +61,15 @@ export class AlbumsService {
   deleteAlbumById(id: string) {
     this.getAlbumById(id);
     this.dbService.deleteAlbumById(id);
+    const tracks = this.dbService.getAllTracksByAlbumId(id);
+
+    if (tracks) {
+      tracks.map((track) => {
+        track.albumId = null;
+        return track;
+      });
+    }
+
+    this.dbService.deleteFavoriteAlbumById(id);
   }
 }

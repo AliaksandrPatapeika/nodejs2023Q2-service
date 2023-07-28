@@ -63,5 +63,6 @@ export class TracksService {
   deleteTrackById(id: string) {
     this.getTrackById(id);
     this.dbService.deleteTrackById(id);
+    this.dbService.deleteFavoriteTrackById(id);
   }
 }
