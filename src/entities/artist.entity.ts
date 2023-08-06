@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Artist } from 'src/interfaces';
 import { IsString, IsBoolean, IsUUID } from 'class-validator';
+import { Artist } from 'src/interfaces';
 
 @Entity('artist')
 export class ArtistEntity implements Artist {

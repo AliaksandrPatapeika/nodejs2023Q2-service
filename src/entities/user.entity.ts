@@ -7,8 +7,8 @@ import {
   VersionColumn,
 } from 'typeorm';
 import { Exclude, Transform } from 'class-transformer';
-import { User } from 'src/interfaces';
 import { IsString, IsUUID, IsInt } from 'class-validator';
+import { User } from 'src/interfaces';
 
 @Entity('user')
 export class UserEntity implements User {

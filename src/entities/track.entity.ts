@@ -7,11 +7,11 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsString, IsUUID, IsInt } from 'class-validator';
-import { ArtistEntity } from 'src/entities';
-import { Album } from 'src/interfaces';
+import { AlbumEntity, ArtistEntity } from 'src/entities';
+import { Track } from 'src/interfaces';
 
-@Entity('album')
-export class AlbumEntity implements Album {
+@Entity('track')
+export class TrackEntity implements Track {
   @PrimaryGeneratedColumn('uuid')
   @IsUUID()
   id: string;
@@ -19,10 +19,6 @@ export class AlbumEntity implements Album {
   @Column()
   @IsString()
   name: string;
-
-  @Column()
-  @IsInt()
-  year: number;
 
   @Column({ nullable: true, default: null })
   @IsUUID()
@@ -34,4 +30,19 @@ export class AlbumEntity implements Album {
   })
   @JoinColumn()
   artist: ArtistEntity;
+
+  @Column({ nullable: true, default: null })
+  @IsUUID()
+  albumId: string | null;
+
+  @Exclude()
+  @ManyToOne(() => AlbumEntity, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn()
+  album: AlbumEntity;
+
+  @Column()
+  @IsInt()
+  duration: number;
 }
