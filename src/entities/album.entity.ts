@@ -7,8 +7,9 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsString, IsUUID, IsInt } from 'class-validator';
-import { ArtistEntity, FavoritesEntity } from 'src/entities';
 import { Album } from 'src/interfaces';
+import { FavoritesEntity } from './favorites.entity';
+import { ArtistEntity } from './artist.entity';
 
 @Entity('album')
 export class AlbumEntity implements Album {

@@ -1,6 +1,8 @@
 import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsUUID } from 'class-validator';
-import { AlbumEntity, ArtistEntity, TrackEntity } from 'src/entities';
+import { AlbumEntity } from './album.entity';
+import { ArtistEntity } from './artist.entity';
+import { TrackEntity } from './track.entity';
 
 @Entity('favorites')
 export class FavoritesEntity {

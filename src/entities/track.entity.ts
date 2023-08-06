@@ -7,8 +7,10 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsString, IsUUID, IsInt } from 'class-validator';
-import { AlbumEntity, ArtistEntity, FavoritesEntity } from 'src/entities';
 import { Track } from 'src/interfaces';
+import { ArtistEntity } from './artist.entity';
+import { AlbumEntity } from './album.entity';
+import { FavoritesEntity } from './favorites.entity';
 
 @Entity('track')
 export class TrackEntity implements Track {

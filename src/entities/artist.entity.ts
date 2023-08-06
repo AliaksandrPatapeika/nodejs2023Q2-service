@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsString, IsBoolean, IsUUID } from 'class-validator';
-import { FavoritesEntity } from 'src/entities';
 import { Artist } from 'src/interfaces';
+import { FavoritesEntity } from './favorites.entity';
 
 @Entity('artist')
 export class ArtistEntity implements Artist {

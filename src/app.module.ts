@@ -8,6 +8,8 @@ import { TracksModule } from './tracks/tracks.module';
 import { AlbumsModule } from './albums/albums.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { databaseConfig } from './db/databaseConfig';
 
 @Module({
   imports: [
@@ -18,6 +20,9 @@ import { ConfigModule } from '@nestjs/config';
     TracksModule,
     FavoritesModule,
     ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      useFactory: () => databaseConfig,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
