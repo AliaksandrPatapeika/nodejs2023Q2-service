@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsString, IsUUID, IsInt } from 'class-validator';
-import { ArtistEntity } from 'src/entities';
+import { ArtistEntity, FavoritesEntity } from 'src/entities';
 import { Album } from 'src/interfaces';
 
 @Entity('album')
@@ -24,7 +24,10 @@ export class AlbumEntity implements Album {
   @IsInt()
   year: number;
 
-  @Column({ nullable: true, default: null })
+  @Column({
+    default: null,
+    nullable: true,
+  })
   @IsUUID()
   artistId: string | null;
 
@@ -34,4 +37,14 @@ export class AlbumEntity implements Album {
   })
   @JoinColumn()
   artist: ArtistEntity;
+
+  @Exclude()
+  @ManyToOne(
+    () => FavoritesEntity,
+    (favorites: FavoritesEntity) => favorites.albums,
+    {
+      onDelete: 'SET NULL',
+    },
+  )
+  favorites: FavoritesEntity;
 }
