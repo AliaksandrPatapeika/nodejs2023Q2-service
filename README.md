@@ -20,15 +20,56 @@ npm install
 
 ## Running application
 
-Rename the .env.example file to .env to configure the application.
+Rename the .env.example file to .env and make sure to configure it with the correct database connection details before running the application or database management scripts.
+
+To start the application, first, make sure you have Docker installed and running. Then, in your terminal, run:
 
 ```
-npm start
+npm run docker
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+This command will start the application inside a Docker container. After starting the app on port (4000 as default), you can open the OpenAPI documentation in your browser by typing http://localhost:4000/doc/. For more information about OpenAPI/Swagger, please visit https://swagger.io/.
+
+## Database Management
+
+Before running the commands below, you need to open the terminal inside the Docker container:
+
+```
+npm run docker:sh
+```
+
+### Generate Database Migration
+
+```
+npm run db:generate
+```
+
+This will generate a new migration file in the `src/db/migration/` directory.
+
+### Start Database Migration
+
+```
+npm run db:start
+```
+
+This will execute all pending migrations and apply them to the database.
+
+### Rollback Database Migration
+
+```
+npm run db:rollback
+```
+
+This will revert the last applied migration.
+
+### Drop Database
+
+```
+npm run db:drop
+```
+
+Caution: This will drop the entire database schema and delete all data and cannot be undone.
+
 
 ## Testing
 

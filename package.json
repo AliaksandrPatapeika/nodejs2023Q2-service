@@ -21,7 +21,10 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "docker": "docker-compose up",
     "docker:sh": "docker exec -it app sh",
-    "db:generate": "typeorm-ts-node-commonjs migration:generate src/db/migration/db -d src/db/dataSource.ts"
+    "db:generate": "typeorm-ts-node-commonjs migration:generate src/db/migration/db -d src/db/dataSource.ts",
+    "db:start": "typeorm-ts-node-commonjs migration:run -d src/db/dataSource.ts",
+    "db:rollback": "typeorm-ts-node-commonjs migration:revert -d src/db/dataSource.ts",
+    "db:drop": "typeorm-ts-node-commonjs schema:drop -d src/db/dataSource.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.1.2",
