@@ -114,13 +114,21 @@ Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
-## Scan application docker image for security vulnerabilities
+## Scan docker images for security vulnerabilities
+
+### Scan all docker images
+
+```
+npm run scan:all
+```
+
+### Scan application docker image
 
 ```
 npm run scan:application
 ```
 
-## Scan database docker image for security vulnerabilities
+### Scan database docker image
 
 ```
 npm run scan:database
