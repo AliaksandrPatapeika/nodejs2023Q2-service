@@ -10,72 +10,77 @@ import {
   Put,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { Album } from 'src/interfaces';
+import { AlbumEntity } from '../entities';
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { uuidVersion } from 'src/constants';
 
+/**
+ * Controller responsible for managing albums.
+ */
 @Controller('album')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
   /**
    * Get all albums.
-   * @returns {Album[]} Array of albums.
+   * @returns {Promise<AlbumEntity[]>} An array of albums.
    */
   @Get()
-  getAllAlbums(): Album[] {
+  async getAllAlbums(): Promise<AlbumEntity[]> {
     return this.albumsService.getAllAlbums();
   }
 
   /**
    * Get an album by its ID.
    * @param {string} id - Album ID.
-   * @returns {Album} The album.
+   * @returns {Promise<AlbumEntity>} The requested album.
    */
   @Get(':id')
-  getAlbumById(
+  async getAlbumById(
     @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
-  ): Album {
+  ): Promise<AlbumEntity> {
     return this.albumsService.getAlbumById(id);
   }
 
   /**
    * Create a new album.
-   * @param {CreateAlbumDto} createAlbum - Album data.
-   * @returns {Album} The newly created album.
+   * @param {CreateAlbumDto} createAlbumDto - Album data.
+   * @returns {Promise<AlbumEntity>} The newly created album.
    */
   @Post()
   @HttpCode(StatusCodes.CREATED)
-  createAlbum(@Body() createAlbum: CreateAlbumDto): Album {
-    return this.albumsService.createAlbum(createAlbum);
+  async createAlbum(
+    @Body() createAlbumDto: CreateAlbumDto,
+  ): Promise<AlbumEntity> {
+    return this.albumsService.createAlbum(createAlbumDto);
   }
 
   /**
    * Update an album by its ID.
    * @param {string} id - Album ID.
    * @param {UpdateAlbumDto} updateAlbumDto - Updated album data.
-   * @returns {Album} The updated album.
+   * @returns {Promise<AlbumEntity>} The updated album.
    */
   @Put(':id')
-  updateAlbum(
+  async updateAlbum(
     @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Album {
+  ): Promise<AlbumEntity> {
     return this.albumsService.updateAlbum(id, updateAlbumDto);
   }
 
   /**
    * Delete an album by its ID.
    * @param {string} id - Album ID.
-   * @returns {void}
+   * @returns {Promise<void>}
    */
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  deleteAlbumById(
+  async deleteAlbumById(
     @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
-  ): void {
-    this.albumsService.deleteAlbumById(id);
+  ): Promise<void> {
+    await this.albumsService.deleteAlbumById(id);
   }
 }

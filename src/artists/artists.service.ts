@@ -39,9 +39,9 @@ export class ArtistsService {
   }
 
   async createArtist(artist: CreateArtistDto): Promise<ArtistEntity> {
-    const createdArtist: ArtistEntity = this.artistRepository.create(artist);
+    const newArtist: ArtistEntity = this.artistRepository.create(artist);
 
-    return await this.artistRepository.save(createdArtist);
+    return await this.artistRepository.save(newArtist);
   }
 
   async updateArtist(
