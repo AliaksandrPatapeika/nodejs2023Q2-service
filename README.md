@@ -28,7 +28,7 @@ To start the application, first, make sure you have Docker installed and running
 npm run docker
 ```
 
-This command will start the application inside a Docker container. After starting the app on port (4000 as default), you can open the OpenAPI documentation in your browser by typing http://localhost:4000/doc/. For more information about OpenAPI/Swagger, please visit https://swagger.io/.
+This command will start the application inside a Docker container. After starting the application on port (4000 as default), you can open the OpenAPI documentation in your browser by typing http://localhost:4000/doc/. For more information about OpenAPI/Swagger, please visit https://swagger.io/.
 
 ## Database Management
 
@@ -69,7 +69,6 @@ npm run db:drop
 ```
 
 Caution: This will drop the entire database schema and delete all data and cannot be undone.
-
 
 ## Testing
 
@@ -114,3 +113,15 @@ npm run format
 Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+
+## Scan application docker image for security vulnerabilities
+
+```
+npm run scan:application
+```
+
+## Scan database docker image for security vulnerabilities
+
+```
+npm run scan:database
+```

@@ -24,7 +24,9 @@
     "db:generate": "typeorm-ts-node-commonjs migration:generate src/db/migration/db -d src/db/dataSource.ts",
     "db:start": "typeorm-ts-node-commonjs migration:run -d src/db/dataSource.ts",
     "db:rollback": "typeorm-ts-node-commonjs migration:revert -d src/db/dataSource.ts",
-    "db:drop": "typeorm-ts-node-commonjs schema:drop -d src/db/dataSource.ts"
+    "db:drop": "typeorm-ts-node-commonjs schema:drop -d src/db/dataSource.ts",
+    "scan:application": "docker scout cves nodejs2023q2-service-app",
+    "scan:database": "docker scout cves nodejs2023q2-service-postgres"
   },
   "dependencies": {
     "@nestjs/common": "^10.1.2",
