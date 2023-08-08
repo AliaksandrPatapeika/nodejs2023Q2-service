@@ -59,6 +59,6 @@ export class UsersService {
       throw new NotFoundException(ERROR_MESSAGES.RECORD_NOT_FOUND('User', id));
     }
 
-    await this.usersRepository.delete(id);
+    await this.usersRepository.remove(user);
   }
 }
