@@ -34,8 +34,6 @@ export interface Favorites {
   tracks: string[];
 }
 
-export type UserResponse = Omit<User, 'password'>;
-
 export interface FavoritesResponse {
   artists: Artist[];
   albums: Album[];

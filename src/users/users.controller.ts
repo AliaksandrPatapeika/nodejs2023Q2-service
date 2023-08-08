@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -8,47 +9,52 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { UserResponse } from 'src/interfaces';
+import { UserEntity } from '../entities';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { uuidVersion } from 'src/constants';
 
+/**
+ * Controller responsible for managing users.
+ */
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   /**
    * Get all users.
-   * @returns {UserResponse[]} Array of users.
+   * @returns {Promise<UserEntity[]>} An array of users.
    */
   @Get()
-  getAllUsers(): UserResponse[] {
+  async getAllUsers(): Promise<UserEntity[]> {
     return this.usersService.getAllUsers();
   }
 
   /**
    * Get a user by its ID.
    * @param {string} id - User ID.
-   * @returns {UserResponse} The user.
+   * @returns {Promise<UserEntity>} The requested user.
    */
   @Get(':id')
-  getUserById(
+  async getUserById(
     @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
-  ): UserResponse {
+  ): Promise<UserEntity> {
     return this.usersService.getUserById(id);
   }
 
   /**
    * Create a new user.
    * @param {CreateUserDto} createUserDto - User data.
-   * @returns {UserResponse} The newly created user.
+   * @returns {Promise<UserEntity>} The newly created user.
    */
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @HttpCode(StatusCodes.CREATED)
-  createUser(@Body() createUserDto: CreateUserDto): UserResponse {
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.usersService.createUser(createUserDto);
   }
 
@@ -56,26 +62,27 @@ export class UsersController {
    * Update a user by its ID.
    * @param {string} id - User ID.
    * @param {UpdateUserDto} updateUserDto - Updated user data.
-   * @returns {UserResponse} The updated user.
+   * @returns {Promise<UserEntity>} The updated user.
    */
+  @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
-  updateUser(
+  async updateUser(
     @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): UserResponse {
+  ): Promise<UserEntity> {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
   /**
    * Delete a user by its ID.
    * @param {string} id - User ID.
-   * @returns {void}
+   * @returns {Promise<void>}
    */
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  deleteUserById(
+  async deleteUserById(
     @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
-  ) {
-    this.usersService.deleteUserById(id);
+  ): Promise<void> {
+    await this.usersService.deleteUserById(id);
   }
 }
