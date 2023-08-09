@@ -44,10 +44,9 @@ export class FavoritesService {
     favorites: FavoritesEntity,
     items: string,
     itemToAdd: any,
-    idProperty: string,
   ): Promise<void> {
     const itemIndex = favorites[items].findIndex(
-      (item): boolean => item[idProperty] === itemToAdd[idProperty],
+      (item): boolean => item.id === itemToAdd.id,
     );
 
     if (itemIndex !== -1) {
@@ -65,7 +64,7 @@ export class FavoritesService {
       true,
     );
     const favorites: FavoritesEntity = await this.getFavorites();
-    await this.modifyFavoriteList(favorites, 'tracks', track, 'id');
+    await this.modifyFavoriteList(favorites, 'tracks', track);
   }
 
   async addArtistById(artistId: string): Promise<void> {
@@ -74,7 +73,7 @@ export class FavoritesService {
       true,
     );
     const favorites: FavoritesEntity = await this.getFavorites();
-    await this.modifyFavoriteList(favorites, 'artists', artist, 'id');
+    await this.modifyFavoriteList(favorites, 'artists', artist);
   }
 
   async addAlbumById(albumId: string): Promise<void> {
@@ -83,7 +82,7 @@ export class FavoritesService {
       true,
     );
     const favorites: FavoritesEntity = await this.getFavorites();
-    await this.modifyFavoriteList(favorites, 'albums', album, 'id');
+    await this.modifyFavoriteList(favorites, 'albums', album);
   }
 
   async deleteItemById(
