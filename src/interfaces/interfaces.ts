@@ -28,12 +28,6 @@ export interface Album {
   artistId: string | null;
 }
 
-export interface Favorites {
-  artists: string[];
-  albums: string[];
-  tracks: string[];
-}
-
 export interface FavoritesResponse {
   artists: Artist[];
   albums: Album[];
