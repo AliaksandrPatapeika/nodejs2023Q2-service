@@ -33,9 +33,11 @@ export class FavoritesService {
   async getFavorites(): Promise<FavoritesEntity> {
     const [favorites] = await this.favoritesRepository.find();
     if (!favorites) {
-      return await this.favoritesRepository.save(
-        this.favoritesRepository.create(),
-      );
+      const newFavorites: FavoritesEntity = this.favoritesRepository.create();
+      newFavorites.tracks = [];
+      newFavorites.albums = [];
+      newFavorites.artists = [];
+      return await this.favoritesRepository.save(newFavorites);
     }
     return favorites;
   }
