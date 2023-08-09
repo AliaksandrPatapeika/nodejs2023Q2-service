@@ -1,83 +1,123 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import {
+  FavoritesEntity,
+  TrackEntity,
+  ArtistEntity,
+  AlbumEntity,
+} from '../entities';
 import { AlbumsService } from 'src/albums/albums.service';
 import { ArtistsService } from 'src/artists/artists.service';
 import { TracksService } from 'src/tracks/tracks.service';
-import { DBService } from 'src/db/db.service';
 import { ERROR_MESSAGES } from 'src/constants';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private dbService: DBService) {}
+  constructor(
+    @InjectRepository(FavoritesEntity)
+    private readonly favoritesRepository: Repository<FavoritesEntity>,
+    @Inject(forwardRef(() => TracksService))
+    private readonly tracksService: TracksService,
+    @Inject(forwardRef(() => ArtistsService))
+    private readonly artistsService: ArtistsService,
+    @Inject(forwardRef(() => AlbumsService))
+    private readonly albumsService: AlbumsService,
+  ) {}
 
-  // getAllFavorites() {
-  //   const { tracks, artists, albums } = this.dbService.getAllFavorites();
-  //
-  //   const tracksArr =
-  //     tracks && tracks.length
-  //       ? tracks.map((id) => this.tracksService.getTrackById(id))
-  //       : [];
-  //
-  //   const artistsArr =
-  //     artists && artists.length
-  //       ? artists.map((id) => this.artistsService.getArtistById(id))
-  //       : [];
-  //
-  //   const albumsArr =
-  //     albums && albums.length
-  //       ? albums.map((id) => this.albumsService.getAlbumById(id))
-  //       : [];
-  //
-  //   return { tracks: tracksArr, albums: albumsArr, artists: artistsArr };
-  // }
-  //
-  // createTrack(trackId: string) {
-  //   this.tracksService.getTrackById(trackId, true);
-  //   this.dbService.createFavoriteTrack(trackId);
-  // }
-  //
-  // createArtist(artistId: string) {
-  //   this.artistsService.getArtistById(artistId, true);
-  //   this.dbService.createFavoriteArtist(artistId);
-  // }
-  //
-  // createAlbum(albumId: string) {
-  //   this.albumsService.getAlbumById(albumId, true);
-  //   this.dbService.createFavoriteAlbum(albumId);
-  // }
-  //
-  // deleteTrackById(trackId: string) {
-  //   const favTrack = this.dbService.getFavoriteTrackById(trackId);
-  //
-  //   if (!favTrack) {
-  //     throw new NotFoundException(
-  //       ERROR_MESSAGES.RECORD_NOT_IN_FAVORITES('Track', trackId),
-  //     );
-  //   }
-  //
-  //   this.dbService.deleteFavoriteTrackById(trackId);
-  // }
-  //
-  // deleteArtistById(artistId: string) {
-  //   const favArtist = this.dbService.getFavoriteArtistById(artistId);
-  //
-  //   if (!favArtist) {
-  //     throw new NotFoundException(
-  //       ERROR_MESSAGES.RECORD_NOT_IN_FAVORITES('Artist', artistId),
-  //     );
-  //   }
-  //
-  //   this.dbService.deleteFavoriteArtistById(artistId);
-  // }
-  //
-  // deleteAlbumById(albumId: string) {
-  //   const favAlbum = this.dbService.getFavoriteAlbumById(albumId);
-  //
-  //   if (!favAlbum) {
-  //     throw new NotFoundException(
-  //       ERROR_MESSAGES.RECORD_NOT_IN_FAVORITES('Album', albumId),
-  //     );
-  //   }
-  //
-  //   this.dbService.deleteFavoriteAlbumById(albumId);
-  // }
+  async getFavorites(): Promise<FavoritesEntity> {
+    const [favorites] = await this.favoritesRepository.find();
+    if (!favorites) {
+      return await this.favoritesRepository.save(
+        this.favoritesRepository.create(),
+      );
+    }
+    return favorites;
+  }
+
+  async modifyFavoriteList(
+    favorites: FavoritesEntity,
+    items: string,
+    itemToAdd: any,
+    idProperty: string,
+  ): Promise<void> {
+    const itemIndex = favorites[items].findIndex(
+      (item): boolean => item[idProperty] === itemToAdd[idProperty],
+    );
+
+    if (itemIndex !== -1) {
+      favorites[items].splice(itemIndex, 1);
+    } else {
+      favorites[items].push(itemToAdd);
+    }
+
+    await this.favoritesRepository.save(favorites);
+  }
+
+  async addTrackById(trackId: string): Promise<void> {
+    const track: TrackEntity = await this.tracksService.getTrackById(
+      trackId,
+      true,
+    );
+    const favorites: FavoritesEntity = await this.getFavorites();
+    await this.modifyFavoriteList(favorites, 'tracks', track, 'id');
+  }
+
+  async addArtistById(artistId: string): Promise<void> {
+    const artist: ArtistEntity = await this.artistsService.getArtistById(
+      artistId,
+      true,
+    );
+    const favorites: FavoritesEntity = await this.getFavorites();
+    await this.modifyFavoriteList(favorites, 'artists', artist, 'id');
+  }
+
+  async addAlbumById(albumId: string): Promise<void> {
+    const album: AlbumEntity = await this.albumsService.getAlbumById(
+      albumId,
+      true,
+    );
+    const favorites: FavoritesEntity = await this.getFavorites();
+    await this.modifyFavoriteList(favorites, 'albums', album, 'id');
+  }
+
+  async deleteItemById(
+    favorites: FavoritesEntity,
+    items: string,
+    id: string,
+    type: string,
+  ): Promise<void> {
+    const itemIndex = favorites[items].findIndex(
+      (item): boolean => item.id === id,
+    );
+
+    if (itemIndex !== -1) {
+      favorites[items].splice(itemIndex, 1);
+      await this.favoritesRepository.save(favorites);
+    } else {
+      throw new NotFoundException(
+        ERROR_MESSAGES.RECORD_NOT_IN_FAVORITES(type, id),
+      );
+    }
+  }
+
+  async deleteTrackById(trackId: string): Promise<void> {
+    const favorites: FavoritesEntity = await this.getFavorites();
+    await this.deleteItemById(favorites, 'tracks', trackId, 'Track');
+  }
+
+  async deleteArtistById(artistId: string): Promise<void> {
+    const favorites: FavoritesEntity = await this.getFavorites();
+    await this.deleteItemById(favorites, 'artists', artistId, 'Artist');
+  }
+
+  async deleteAlbumById(albumId: string): Promise<void> {
+    const favorites: FavoritesEntity = await this.getFavorites();
+    await this.deleteItemById(favorites, 'albums', albumId, 'Album');
+  }
 }
