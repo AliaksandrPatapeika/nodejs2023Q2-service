@@ -33,3 +33,9 @@ export interface FavoritesResponse {
   albums: Album[];
   tracks: Track[];
 }
+
+export interface Token {
+  id: string;
+  refreshToken: string;
+  userId: string;
+}
