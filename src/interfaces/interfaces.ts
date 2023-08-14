@@ -39,3 +39,8 @@ export interface Token {
   refreshToken: string;
   userId: string;
 }
+
+export interface JwtTokens {
+  accessToken: string;
+  refreshToken: string;
+}
