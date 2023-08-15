@@ -155,9 +155,9 @@ paths:
                     type: string
                 description: JWT Tokens
         400:
-          description: Bad request
+          description: Bad request.
         403:
-          description: Incorrect login or password
+          description: Incorrect login or password.
   /auth/signup:
     post:
       tags:
