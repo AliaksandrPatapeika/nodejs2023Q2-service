@@ -5,6 +5,7 @@ import { UsersModule } from '../users/users.module';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { JwtStrategy, LocalStrategy } from './strategies';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { AuthController } from './auth.controller';
     forwardRef(() => UsersModule),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService],
+  providers: [AuthService, UsersService, JwtStrategy, LocalStrategy],
   exports: [TypeOrmModule],
 })
 export class AuthModule {}
