@@ -2,6 +2,10 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
+/**
+ * Guard for protecting routes with JWT access token authentication.
+ * This guard is used to secure routes that require JWT access token validation.
+ */
 @Injectable()
 export class AccessTokenGuard extends AuthGuard('jwt') {
   constructor() {

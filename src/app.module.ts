@@ -10,6 +10,8 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './db/databaseConfig';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from './auth/guards';
 
 @Module({
   imports: [
@@ -25,6 +27,12 @@ import { databaseConfig } from './db/databaseConfig';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+  ],
 })
 export class AppModule {}

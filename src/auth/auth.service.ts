@@ -19,16 +19,15 @@ export class AuthService {
     return await this.userService.createUser(user);
   }
 
-  async login(): Promise<JwtTokens> {
+  async login(user: UserEntity): Promise<JwtTokens> {
     const accessToken = 'mockAccessToken';
     const refreshToken = 'mockRefreshToken';
 
     return { accessToken, refreshToken };
   }
 
-  async refresh(): Promise<JwtTokens> {
+  async refresh(refreshToken: string): Promise<JwtTokens> {
     const accessToken = 'mockAccessToken';
-    const refreshToken = 'mockRefreshToken';
     return { accessToken, refreshToken };
   }
 }

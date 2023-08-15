@@ -1,9 +1,17 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Request,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import { UserEntity } from '../entities';
-import { JwtTokens } from '../interfaces';
+import { JwtTokens, Token } from '../interfaces';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthService } from './auth.service';
+import { LocalAuthGuard, RefreshTokenGuard } from './guards';
 
 /**
  * Controller responsible for user authentication.
@@ -25,21 +33,25 @@ export class AuthController {
 
   /**
    * Log in user.
+   * @param {Request} request - The incoming request.
    * @returns {Promise<JwtTokens>} JWT tokens.
    */
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(StatusCodes.OK)
-  async login(): Promise<JwtTokens> {
-    return await this.authService.login();
+  async login(@Request() request): Promise<JwtTokens> {
+    return await this.authService.login(request.user);
   }
 
   /**
    * Refresh JWT tokens.
+   * @param {Token} body - The request body containing the refresh token.
    * @returns {Promise<JwtTokens>} New JWT tokens.
    */
+  @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   @HttpCode(StatusCodes.OK)
-  async refresh(): Promise<JwtTokens> {
-    return await this.authService.refresh();
+  async refresh(@Body() { refreshToken }: Token): Promise<JwtTokens> {
+    return await this.authService.refresh(refreshToken);
   }
 }
