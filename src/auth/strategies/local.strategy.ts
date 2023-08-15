@@ -14,7 +14,7 @@ import { ERROR_MESSAGES, LOGIN_FIELD } from 'src/constants';
  */
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
+  constructor(private readonly authService: AuthService) {
     super({ usernameField: LOGIN_FIELD });
   }
 
