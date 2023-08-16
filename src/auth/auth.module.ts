@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenEntity } from '../entities';
 import { UsersModule } from '../users/users.module';
@@ -12,6 +13,7 @@ import { JwtStrategy, LocalStrategy } from './strategies';
   imports: [
     TypeOrmModule.forFeature([TokenEntity]),
     forwardRef(() => UsersModule),
+    JwtModule.register({}),
   ],
   controllers: [AuthController],
   providers: [

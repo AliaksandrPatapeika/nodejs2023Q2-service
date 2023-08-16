@@ -4,6 +4,7 @@
 export const ERROR_MESSAGES = {
   BAD_REQUEST: 'Bad request.',
   INCORRECT_CREDENTIALS: 'Incorrect login or password.',
+  INVALID_REFRESH_TOKEN: 'Refresh token is invalid or expired.',
   OLD_PASSWORD_IS_WRONG: 'Old password is wrong.',
   RECORD_NOT_FOUND: (recordType: string, id: string) =>
     `${recordType} with id: ${id} does not exist.`,
