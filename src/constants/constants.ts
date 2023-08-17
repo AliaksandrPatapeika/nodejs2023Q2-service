@@ -16,6 +16,7 @@ export const ERROR_MESSAGES = {
  * JWT constants used in the application.
  */
 export const JWT_CONSTANTS = {
+  CRYPT_SALT: 'CRYPT_SALT',
   JWT_SECRET_KEY: 'JWT_SECRET_KEY',
   JWT_SECRET_REFRESH_KEY: 'JWT_SECRET_REFRESH_KEY',
   TOKEN_EXPIRE_TIME: 'TOKEN_EXPIRE_TIME',

@@ -7,7 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { compareSync } from 'bcrypt';
+import { compareSync, hash } from 'bcrypt';
 import { Repository } from 'typeorm';
 import { TokenEntity, UserEntity } from '../entities';
 import { JwtTokens } from '../interfaces';
@@ -27,8 +27,16 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signup(user: CreateUserDto): Promise<UserEntity> {
-    return await this.userService.createUser(user);
+  async signup({ login, password }: CreateUserDto): Promise<UserEntity> {
+    const salt: number = Number(
+      this.configService.get(JWT_CONSTANTS.CRYPT_SALT),
+    );
+    const passwordHashed: string = await hash(password, salt);
+
+    return await this.userService.createUser({
+      login,
+      password: passwordHashed,
+    });
   }
 
   async validateUser({
@@ -97,8 +105,21 @@ export class AuthService {
     userId: string,
     refreshToken: string,
   ): Promise<TokenEntity> {
+    const salt: number = Number(
+      this.configService.get(JWT_CONSTANTS.CRYPT_SALT),
+    );
+    const refreshTokenHashed: string = await hash(refreshToken, salt);
+    const existingToken: TokenEntity = await this.tokenRepository.findOneBy({
+      userId,
+    });
+
+    if (existingToken) {
+      existingToken.refreshToken = refreshTokenHashed;
+      return await this.tokenRepository.save(existingToken);
+    }
+
     const newToken: TokenEntity = this.tokenRepository.create({
-      refreshToken,
+      refreshToken: refreshTokenHashed,
       userId,
     });
 
