@@ -12,6 +12,5 @@ export const databaseConfig: DataSourceOptions = {
   database: process.env.POSTGRES_DB,
   entities,
   migrations,
-  logging: true,
   migrationsRun: true,
 };
