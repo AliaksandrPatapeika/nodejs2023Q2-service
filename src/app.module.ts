@@ -10,9 +10,9 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './db/databaseConfig';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guards';
-import { LoggingMiddleware } from './logging';
+import { HttpExceptionFilter, LoggingMiddleware } from './logging';
 
 @Module({
   imports: [
@@ -33,6 +33,10 @@ import { LoggingMiddleware } from './logging';
     {
       provide: APP_GUARD,
       useClass: AccessTokenGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
     },
   ],
 })

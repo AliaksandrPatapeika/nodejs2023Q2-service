@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 
 export async function appendOrRotateLog(
   logFileName: string,
-  log: string,
+  logData: string,
   maxFileSize: number,
 ): Promise<void> {
   try {
@@ -13,7 +13,7 @@ export async function appendOrRotateLog(
       }
     }
 
-    await fs.appendFile(logFileName, log + '\n', 'utf8');
+    await fs.appendFile(logFileName, logData + '\n', 'utf8');
   } catch (error) {
     throw new Error(`Error appending log to ${logFileName}: ${error.message}`);
   }
