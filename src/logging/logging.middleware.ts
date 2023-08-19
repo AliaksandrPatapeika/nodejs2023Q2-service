@@ -23,6 +23,7 @@ export class LoggingMiddleware implements NestMiddleware {
     // Subscribe to the 'finish' event to perform logging after the response is completed
     response.on('finish', async (): Promise<void> => {
       const logData: string = `
+Timestamp: ${new Date().toISOString()}
 Incoming Request:
   Method: ${method}
   URL: ${originalUrl}
