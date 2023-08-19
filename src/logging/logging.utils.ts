@@ -42,3 +42,16 @@ async function performLogRotation(logFileName: string): Promise<void> {
   const rotatedFilePath: string = await generateRotatedFileName(logFileName);
   await fs.rename(logFileName, rotatedFilePath);
 }
+
+export async function writeErrorLogToFile(
+  error: Error,
+  logFileName: string,
+  maxFileSize: number,
+): Promise<void> {
+  try {
+    await appendOrRotateLog(logFileName, JSON.stringify(error), maxFileSize);
+    process.exit(1);
+  } catch (appendError) {
+    throw new Error(`Error appending log: ${appendError.message}`);
+  }
+}
