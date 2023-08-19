@@ -25,3 +25,4 @@ export const JWT_CONSTANTS = {
 
 export const uuidVersion = '4';
 export const LOGIN_FIELD = 'login';
+export const LOGGING_LEVELS = ['debug', 'error', 'log', 'verbose', 'warn'];
