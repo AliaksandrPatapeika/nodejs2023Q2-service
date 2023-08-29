@@ -1,3 +1,3 @@
-import { Db1691347696704 as migration } from './1691347696704-db';
+import { Db1691661241879 as migration } from "./1691661241879-db";
 
 export const migrations = [migration];

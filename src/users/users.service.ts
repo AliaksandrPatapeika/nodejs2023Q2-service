@@ -30,6 +30,10 @@ export class UsersService {
     return user;
   }
 
+  async getUserByLogin(login: string): Promise<UserEntity | undefined> {
+    return this.usersRepository.findOne({ where: { login } });
+  }
+
   async createUser(user: CreateUserDto): Promise<UserEntity> {
     const newUser: UserEntity = this.usersRepository.create(user);
 
