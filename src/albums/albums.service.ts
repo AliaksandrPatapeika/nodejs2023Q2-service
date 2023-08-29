@@ -1,27 +1,41 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { DBService } from 'src/db/db.service';
-import { v4 as uuidv4 } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AlbumEntity, ArtistEntity } from '../entities';
+import { ArtistsService } from '../artists/artists.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { ERROR_MESSAGES } from 'src/constants';
 
 @Injectable()
 export class AlbumsService {
-  constructor(private readonly dbService: DBService) {}
+  constructor(
+    @InjectRepository(AlbumEntity)
+    private readonly albumRepository: Repository<AlbumEntity>,
+    @Inject(forwardRef(() => ArtistsService))
+    private readonly artistService: ArtistsService,
+  ) {}
 
-  getAllAlbums() {
-    return this.dbService.getAllAlbums();
+  async getAllAlbums(): Promise<AlbumEntity[]> {
+    return await this.albumRepository.find();
   }
 
-  getAlbumById(id: string, fav = false) {
-    const album = this.dbService.getAlbumById(id);
+  async getAlbumById(
+    id: string,
+    isFavorites: boolean = false,
+  ): Promise<AlbumEntity> {
+    const album: AlbumEntity = await this.albumRepository.findOneBy({ id });
 
     if (!album) {
-      const Exception = fav ? UnprocessableEntityException : NotFoundException;
+      const Exception = isFavorites
+        ? UnprocessableEntityException
+        : NotFoundException;
 
       throw new Exception(ERROR_MESSAGES.RECORD_NOT_FOUND('Album', id));
     }
@@ -29,19 +43,28 @@ export class AlbumsService {
     return album;
   }
 
-  createAlbum(album: CreateAlbumDto) {
-    const newAlbum = { id: uuidv4(), ...album };
+  async createAlbum({
+    name,
+    year,
+    artistId,
+  }: CreateAlbumDto): Promise<AlbumEntity> {
+    const artist: ArtistEntity = artistId
+      ? await this.artistService.getArtistById(artistId)
+      : null;
+    const newAlbum: AlbumEntity = this.albumRepository.create({
+      name,
+      year,
+      artist,
+    });
 
-    if (!album.artistId) {
-      newAlbum.artistId = null;
-    }
-
-    this.dbService.createAlbum(newAlbum);
-    return newAlbum;
+    return await this.albumRepository.save(newAlbum);
   }
 
-  updateAlbum(id: string, { name, year, artistId }: UpdateAlbumDto) {
-    const album = this.getAlbumById(id);
+  async updateAlbum(
+    id: string,
+    { name, year, artistId }: UpdateAlbumDto,
+  ): Promise<AlbumEntity> {
+    const album: AlbumEntity = await this.getAlbumById(id);
 
     if (name) {
       album.name = name;
@@ -52,24 +75,16 @@ export class AlbumsService {
     }
 
     if (artistId) {
-      album.artistId = artistId;
+      album.artist = artistId
+        ? await this.artistService.getArtistById(artistId)
+        : null;
     }
 
-    return album;
+    return await this.albumRepository.save(album);
   }
 
-  deleteAlbumById(id: string) {
-    this.getAlbumById(id);
-    this.dbService.deleteAlbumById(id);
-    const tracks = this.dbService.getAllTracksByAlbumId(id);
-
-    if (tracks) {
-      tracks.map((track) => {
-        track.albumId = null;
-        return track;
-      });
-    }
-
-    this.dbService.deleteFavoriteAlbumById(id);
+  async deleteAlbumById(id: string): Promise<void> {
+    const album: AlbumEntity = await this.getAlbumById(id);
+    await this.albumRepository.remove(album);
   }
 }

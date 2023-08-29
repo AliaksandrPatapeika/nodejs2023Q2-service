@@ -3,25 +3,34 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ArtistEntity } from '../entities';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { DBService } from 'src/db/db.service';
 import { ERROR_MESSAGES } from 'src/constants';
 
 @Injectable()
 export class ArtistsService {
-  constructor(private readonly dbService: DBService) {}
+  constructor(
+    @InjectRepository(ArtistEntity)
+    private readonly artistRepository: Repository<ArtistEntity>,
+  ) {}
 
-  getAllArtists() {
-    return this.dbService.getAllArtists();
+  async getAllArtists(): Promise<ArtistEntity[]> {
+    return await this.artistRepository.find();
   }
 
-  getArtistById(id: string, fav = false) {
-    const artist = this.dbService.getArtistById(id);
+  async getArtistById(
+    id: string,
+    isFavorites: boolean = false,
+  ): Promise<ArtistEntity> {
+    const artist: ArtistEntity = await this.artistRepository.findOneBy({ id });
 
     if (!artist) {
-      const Exception = fav ? UnprocessableEntityException : NotFoundException;
+      const Exception = isFavorites
+        ? UnprocessableEntityException
+        : NotFoundException;
 
       throw new Exception(ERROR_MESSAGES.RECORD_NOT_FOUND('Artist', id));
     }
@@ -29,14 +38,23 @@ export class ArtistsService {
     return artist;
   }
 
-  createArtist(artist: CreateArtistDto) {
-    const newArtist = { id: uuidv4(), ...artist };
-    this.dbService.createArtist(newArtist);
-    return newArtist;
+  async createArtist(artist: CreateArtistDto): Promise<ArtistEntity> {
+    const newArtist: ArtistEntity = this.artistRepository.create(artist);
+
+    return await this.artistRepository.save(newArtist);
   }
 
-  updateArtist(id: string, { name, grammy }: UpdateArtistDto) {
-    const artist = this.getArtistById(id);
+  async updateArtist(
+    id: string,
+    { name, grammy }: UpdateArtistDto,
+  ): Promise<ArtistEntity> {
+    const artist: ArtistEntity = await this.artistRepository.findOneBy({ id });
+
+    if (!artist) {
+      throw new NotFoundException(
+        ERROR_MESSAGES.RECORD_NOT_FOUND('Artist', id),
+      );
+    }
 
     if (name) {
       artist.name = name;
@@ -46,29 +64,11 @@ export class ArtistsService {
       artist.grammy = grammy;
     }
 
-    return artist;
+    return await this.artistRepository.save(artist);
   }
 
-  deleteArtistById(id: string) {
-    this.getArtistById(id);
-    this.dbService.deleteArtistById(id);
-    const tracks = this.dbService.getAllTracksByArtistId(id);
-    const albums = this.dbService.getAllAlbumsByArtistId(id);
-
-    if (tracks) {
-      tracks.map((track) => {
-        track.artistId = null;
-        return track;
-      });
-    }
-
-    if (albums) {
-      albums.map((album) => {
-        album.artistId = null;
-        return album;
-      });
-    }
-
-    this.dbService.deleteFavoriteArtistById(id);
+  async deleteArtistById(id: string): Promise<void> {
+    const artist: ArtistEntity = await this.getArtistById(id);
+    await this.artistRepository.remove(artist);
   }
 }

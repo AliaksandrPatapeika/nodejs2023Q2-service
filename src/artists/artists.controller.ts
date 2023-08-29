@@ -10,71 +10,77 @@ import {
   Put,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { Artist } from 'src/interfaces';
+import { ArtistEntity } from '../entities';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { uuidVersion } from 'src/constants';
 
+/**
+ * Controller responsible for managing artists.
+ */
 @Controller('artist')
 export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
 
   /**
    * Get all artists.
-   * @returns {Artist[]} Array of artists.
+   * @returns {Promise<ArtistEntity[]>} An array of artists.
    */
   @Get()
-  getAllArtists(): Artist[] {
+  async getAllArtists(): Promise<ArtistEntity[]> {
     return this.artistsService.getAllArtists();
   }
 
   /**
    * Get an artist by its ID.
    * @param {string} id - Artist ID.
-   * @returns {Artist} The artist.
+   * @returns {Promise<ArtistEntity>} The requested artist.
    */
   @Get(':id')
-  getArtistById(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): Artist {
+  async getArtistById(
+    @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
+  ): Promise<ArtistEntity> {
     return this.artistsService.getArtistById(id);
   }
 
   /**
    * Create a new artist.
-   * @param {CreateArtistDto} createArtist - Artist data.
-   * @returns {Artist} The newly created artist.
+   * @param {CreateArtistDto} createArtistDto - Artist data.
+   * @returns {Promise<ArtistEntity>} The newly created artist.
    */
   @Post()
   @HttpCode(StatusCodes.CREATED)
-  createArtist(@Body() createArtist: CreateArtistDto): Artist {
-    return this.artistsService.createArtist(createArtist);
+  async createArtist(
+    @Body() createArtistDto: CreateArtistDto,
+  ): Promise<ArtistEntity> {
+    return this.artistsService.createArtist(createArtistDto);
   }
 
   /**
    * Update an artist by its ID.
    * @param {string} id - Artist ID.
    * @param {UpdateArtistDto} updateArtistDto - Updated artist data.
-   * @returns {Artist} The updated artist.
+   * @returns {Promise<ArtistEntity>} The updated artist.
    */
   @Put(':id')
-  updateArtist(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  async updateArtist(
+    @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
-  ): Artist {
+  ): Promise<ArtistEntity> {
     return this.artistsService.updateArtist(id, updateArtistDto);
   }
 
   /**
    * Delete an artist by its ID.
    * @param {string} id - Artist ID.
-   * @returns {void}
+   * @returns {Promise<void>}
    */
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  deleteArtistById(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): void {
-    this.artistsService.deleteArtistById(id);
+  async deleteArtistById(
+    @Param('id', new ParseUUIDPipe({ version: uuidVersion })) id: string,
+  ): Promise<void> {
+    await this.artistsService.deleteArtistById(id);
   }
 }
